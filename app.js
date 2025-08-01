@@ -1,8 +1,9 @@
 // importiamo dotenv per gestire le variabili d'ambiente
 require("dotenv").config();
 
-// importiamo express
+// importiamo express e cors
 const express = require("express");
+const cors = require("cors");
 const app = express();
 const port = process.env.PORT;
 
@@ -24,6 +25,9 @@ app.listen(port, () => {
 app.get("/", (req, res) => {
   res.send("Server in ascolto");
 });
+
+//
+app.use(cors());
 
 // registro il body-parser
 app.use(express.json());
