@@ -53,5 +53,35 @@ function show(req, res) {
   });
 }
 
+/* store (create) */
+function storeReviews(req, res) {
+  // estraiamo l'ID del film dai parametri dell'URL
+  const { id } = req.params;
+  // prendiamo i dati della recensione dal corpo della richiesta
+  const { name, text, vote } = req.body;
+  // controlliamo se mancano dei campi obbligatori
+  if (!name || !text || !vote) {
+    return res.status(400).json({ error: "Missing data" });
+  }
+  // SQL per inserire la recensione nella tabella "reviews"
+  const sql = `INSERT INTO reviews (movie_id, name, text, vote) VALUES (?, ?, ?, ?)`;
+  // eseguiamo la query con i dati passati
+  connection.query(sql, [id, name, text, vote], (err, result) => {
+    // se si verifica un errore durante la connessione o l'esecuzione della query
+    if (err) return res.status(500).json({ error: "Database query failed" });
+    // se l'inserimento ha successo, restituisce lo status 201 (Created) e i dati salvati
+    res.status(201).json({
+      message: "Review created successfully",
+      review: {
+        id: result.insertId,
+        movie_id: parseInt(id),
+        name,
+        text,
+        vote,
+      },
+    });
+  });
+}
+
 // esportiamo tutto
-module.exports = { index, show };
+module.exports = { index, show, storeReviews };
